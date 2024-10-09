@@ -1,64 +1,68 @@
+#include "serialization_context.h"
+
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include <ctime>
 #include <sstream>
-#include "serialization_context.h"
+
 #include "serializer.h"
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
 
 using namespace mini_core;
 using namespace std;
 
-
-static const string DEFAULT_DATA_FILE="data.log";
-static const string DEFAULT_BLOB_FILE="binary/<classname>.<nameAttribute>.<id>.<ext>";
-static const string CURRENT_DIR=".";
-
+static const string DEFAULT_DATA_FILE = "data.log";
+static const string DEFAULT_BLOB_FILE =
+    "binary/<classname>.<nameAttribute>.<id>.<ext>";
+static const string CURRENT_DIR = ".";
 
 static string toString(int i, size_t width, char padding) {
   stringstream ss;
-  ss.width(width);
+  ss.width(static_cast<long int>(width));
   ss.fill(padding);
-  ss <<  i;
+  ss << i;
   return ss.str();
 }
 
 void SerializationContext::loadCurrentTime() {
-  time_t currentTime=time(0);
-  struct tm* timeStruct=localtime(&currentTime);
-  _envMap["yyyy"]=toString(timeStruct->tm_year+1900,4,'0');
-  _envMap["yy"]=toString((timeStruct->tm_year+1900)%100,2,'0');
-  _envMap["mm"]=toString(timeStruct->tm_mon+1,2,'0');
-  _envMap["dd"]=toString(timeStruct->tm_mday,2,'0');
-  _envMap["hh"]=toString(timeStruct->tm_hour,2,'0');
-  _envMap["mi"]=toString(timeStruct->tm_min,2,'0');
-  _envMap["ss"]=toString(timeStruct->tm_sec,2,'0');
+  time_t currentTime = time(0);
+  struct tm* timeStruct = localtime(&currentTime);
+  _envMap["yyyy"] = toString(timeStruct->tm_year + 1900, 4, '0');
+  _envMap["yy"] = toString((timeStruct->tm_year + 1900) % 100, 2, '0');
+  _envMap["mm"] = toString(timeStruct->tm_mon + 1, 2, '0');
+  _envMap["dd"] = toString(timeStruct->tm_mday, 2, '0');
+  _envMap["hh"] = toString(timeStruct->tm_hour, 2, '0');
+  _envMap["mi"] = toString(timeStruct->tm_min, 2, '0');
+  _envMap["ss"] = toString(timeStruct->tm_sec, 2, '0');
 }
 
 void SerializationContext::replaceEnvTags(string& str) {
-  string::iterator beginTag=str.end();
-  for (string::iterator it=str.begin();it!=str.end();it++) {
-    if (*it=='<') {
-      beginTag=it;
+  string::iterator beginTag = str.end();
+  for (string::iterator it = str.begin(); it != str.end(); it++) {
+    if (*it == '<') {
+      beginTag = it;
       continue;
     }
-    if (*it=='>'&&beginTag<it) {
-      string replacement=_envMap[str.substr(beginTag+1-str.begin(),it-beginTag-1)];
-      size_t newpos=beginTag-str.begin()+replacement.length()-1;
-      str.replace(beginTag,it+1,replacement);
-      it=str.begin()+newpos;
+    if (*it == '>' && beginTag < it) {
+      string replacement =
+          _envMap[str.substr(static_cast<size_t>(beginTag + 1 - str.begin()),
+                             static_cast<size_t>(it - beginTag - 1))];
+      size_t newpos = static_cast<size_t>(beginTag - str.begin()) +
+                      replacement.length() - 1;
+      str.replace(beginTag, it + 1, replacement);
+      it = str.begin() + static_cast<long int>(newpos);
     }
   }
 }
 
-
-static void adjustBinaryPath(string& fname, const map<string,string>& envMap) {
-  //Check if it's an absolute path
-  if (fname[0]!='/') {
-    fname.insert(0,"/");
-    auto it=envMap.find("datadir");
-    if (it!=envMap.end())
-      fname.insert(0,it->second);
+static void adjustBinaryPath(string& fname, const map<string, string>& envMap) {
+  // Check if it's an absolute path
+  if (fname[0] != '/') {
+    fname.insert(0, "/");
+    auto it = envMap.find("datadir");
+    if (it != envMap.end())
+      fname.insert(0, it->second);
     else
       throw std::runtime_error("BOSS: no data dir");
   }
@@ -76,26 +80,24 @@ SerializationContext::~SerializationContext() {
   destroyOutputStream();
 }
 
-
 string SerializationContext::createBinaryFilePath(BaseBLOBReference& instance) {
-  _envMap["classname"]=instance.className();
-  _envMap["nameAttribute"]=instance.nameAttribute();
-  _envMap["id"]=toString(instance.getId(),7,'0');
-  _envMap["ext"]=instance.extension();
-  string str=_blobFileName;
+  _envMap["classname"] = instance.className();
+  _envMap["nameAttribute"] = instance.nameAttribute();
+  _envMap["id"] = toString(instance.getId(), 7, '0');
+  _envMap["ext"] = instance.extension();
+  string str = _blobFileName;
   replaceEnvTags(str);
 
-  //cerr << "Binary file path: " << str << endl;
+  // cerr << "Binary file path: " << str << endl;
   return str;
 }
-
 
 ostream* SerializationContext::getBinaryOutputStream(const string& fname) {
   if (fname.empty()) {
     return 0;
   }
-  string str=fname;
-  adjustBinaryPath(str,_envMap);
+  string str = fname;
+  adjustBinaryPath(str, _envMap);
 
   //*** Boost dependent
   // if (!path(str).parent_path().empty()) {
@@ -104,10 +106,9 @@ ostream* SerializationContext::getBinaryOutputStream(const string& fname) {
 
   //****************************** bdc
   std::size_t found = str.find_last_of("/");
-  string path = str.substr(0,found);
+  string path = str.substr(0, found);
   DIR* dir = opendir(path.c_str());
-  if(!dir)
-    mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+  if (!dir) mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
   closedir(dir);
   //****************************** bdc
@@ -119,113 +120,112 @@ istream* SerializationContext::getBinaryInputStream(const string& fname) const {
   if (fname.empty()) {
     return 0;
   }
-  string str=fname;
-  adjustBinaryPath(str,_envMap);
+  string str = fname;
+  adjustBinaryPath(str, _envMap);
   return new ifstream(str.c_str());
 }
 
 void SerializationContext::makeInputStream() {
   if (!_inputStream) {
-    if (_inputDataFileName == "stdin"){
-      _inputStream=&cin;
+    if (_inputDataFileName == "stdin") {
+      _inputStream = &cin;
     } else
-      _inputStream=new ifstream(_inputDataFileName.c_str());
+      _inputStream = new ifstream(_inputDataFileName.c_str());
   }
 }
 
-void  SerializationContext::makeOutputStream(){
+void SerializationContext::makeOutputStream() {
   if (!_outputStream) {
-    string str=_outputDataFileName;
-    if (str=="stdout"){
+    string str = _outputDataFileName;
+    if (str == "stdout") {
       _outputStream = &cout;
-    } else
-      if (str=="stderr"){
-        _outputStream = &cerr;
-      } else {
-        replaceEnvTags(str);
+    } else if (str == "stderr") {
+      _outputStream = &cerr;
+    } else {
+      replaceEnvTags(str);
 
-        //*** Boost dependent
-        //      if (!path(str).parent_path().empty()) {
-        //  create_directories(path(str).parent_path());
-        //      }
+      //*** Boost dependent
+      //      if (!path(str).parent_path().empty()) {
+      //  create_directories(path(str).parent_path());
+      //      }
 
-        //****************************** bdc
-        std::size_t found = str.find_last_of("/");
-        string path = str.substr(0,found);
-        DIR* dir = opendir(path.c_str());
-        if(dir)
-          mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
-        closedir(dir);
-        //****************************** bdc
+      //****************************** bdc
+      std::size_t found = str.find_last_of("/");
+      string path = str.substr(0, found);
+      DIR* dir = opendir(path.c_str());
+      if (dir) mkdir(path.c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+      closedir(dir);
+      //****************************** bdc
 
-        _outputStream=new ofstream(str.c_str());
-      }
+      _outputStream = new ofstream(str.c_str());
+    }
   }
 }
 
-void SerializationContext::setInputStream(std::istream* is, const std::string& filename){
+void SerializationContext::setInputStream(std::istream* is,
+                                          const std::string& filename) {
   destroyInputStream();
-  if (is == &cin){
+  if (is == &cin) {
     _inputDataFileName = "stdin";
-  } else if (_inputDataFileName!="")
+  } else if (_inputDataFileName != "")
     _inputDataFileName = filename;
   _inputStream = is;
 }
 
-void SerializationContext::setOutputStream(std::ostream* os, const std::string& filename){
+void SerializationContext::setOutputStream(std::ostream* os,
+                                           const std::string& filename) {
   destroyOutputStream();
   if (os == &cout) {
     _outputDataFileName = "stdout";
   } else if (os == &cerr) {
     _outputDataFileName = "stderr";
-  } else if (_outputDataFileName!="") {
+  } else if (_outputDataFileName != "") {
     _outputDataFileName = filename;
   }
   _outputStream = os;
 }
 
 void SerializationContext::destroyInputStream() {
-  if (_inputStream && _inputStream!=&cin) {
+  if (_inputStream && _inputStream != &cin) {
     delete _inputStream;
   }
-  _inputStream=0;
-
+  _inputStream = 0;
 }
 
 void SerializationContext::destroyOutputStream() {
-  if (_outputStream && _outputStream!=&cerr && _outputStream!=&cout) {
+  if (_outputStream && _outputStream != &cerr && _outputStream != &cout) {
     delete _outputStream;
   }
   _outputStream = 0;
 }
 
 void SerializationContext::setInputFilePath(const string& fpath) {
-  if (fpath.length()==0) {
+  if (fpath.length() == 0) {
     return;
   }
-  _inputDataFileName=fpath;
+  _inputDataFileName = fpath;
   destroyInputStream();
 }
 
 void SerializationContext::setOutputFilePath(const string& fpath) {
-  if (fpath.length()==0) {
+  if (fpath.length() == 0) {
     return;
   }
-  _outputDataFileName=fpath;
+  _outputDataFileName = fpath;
   loadCurrentTime();
-  //Extract directory
-  size_t pos=_outputDataFileName.rfind('/');
-  if (pos==string::npos) {
-    _envMap["datadir"]=CURRENT_DIR;
+  // Extract directory
+  size_t pos = _outputDataFileName.rfind('/');
+  if (pos == string::npos) {
+    _envMap["datadir"] = CURRENT_DIR;
   } else {
-    _envMap["datadir"]=_outputDataFileName.substr(0,pos);
+    _envMap["datadir"] = _outputDataFileName.substr(0, pos);
   }
   destroyOutputStream();
 }
 
 void SerializationContext::setBinaryPath(const string& fpath) {
-  if (fpath.length()==0) {
+  if (fpath.length() == 0) {
     return;
   }
-  _blobFileName=fpath;
+  _blobFileName = fpath;
 }
