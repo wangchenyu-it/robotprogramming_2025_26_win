@@ -1,5 +1,4 @@
-#ifndef _SURFACE_H_
-#define _SURFACE_H_
+#pragma once
 
 #include "vec3.h"
 #include "image.h"
@@ -63,4 +62,3 @@ void drawSurface(Surface* s) ;
 int getTransformOnSurface(float transform[16], Surface* s,
 			  float x, float y, float z, float alpha, int inverse);
 
-#endif
