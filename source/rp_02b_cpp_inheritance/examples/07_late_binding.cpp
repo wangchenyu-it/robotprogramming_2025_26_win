@@ -74,8 +74,8 @@ int main(int argc, char ** argv) {
     a_ref.print();
 
     // a is a copy of b
-    A_lb copy_of_b_as_a(b);
-    copy_of_b_as_a.print();
+    A_lb a2(b);
+    a2.print();
   }
 
   

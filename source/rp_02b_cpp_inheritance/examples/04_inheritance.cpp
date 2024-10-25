@@ -45,6 +45,10 @@ struct B: public A {
 };
 
 int main(int argc, char** argv) {
+  for (int i=0; i<argc; ++i) {
+    cerr << i << ":" << argv[i] << endl;
+  }
+  
   cerr << endl;
   cerr << "create A " << endl;
   A a(3);
