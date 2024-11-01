@@ -1,60 +1,6 @@
 #include "world.h"
+#include "grid_map.h"
 
-struct GridMap: public Grid,
-                public GridMapping {
-}
-  
-struct DifferentialDriveRobot: public WorldItem {
-  float rot_vel=0;
-  float trans_vel=0;
-  DifferentialDriveRobot(WorldItem* p=0): WorldItem(p) {}
-  virtual void timerTick(float dt) override {
-    Isometry2f motion(dt*trans_vel, 0, dt*rot_vel);
-    Isometry2f old_pose_in_parent=pose_in_parent;
-    pose_in_parent=pose_in_parent*motion;
-
-    World* w=getWorld();
-    if (w->checkCollision(this)) {
-      pose_in_parent=old_pose_in_parent;
-    }
-    WorldItem::timerTick();
-  }
-};
-
-
-struct LaserScan {
-  float range_max=10, range_min=0.1;
-  float angle_start=-M_PI/2, angle_end=M_PI/2;
-  int num_beams=181;
-  float* ranges;
-  LaserScan(int n_beams) {
-    num_beams=n_beams;
-    ranges=new float[num_beams];
-  }
-  ~LaserScan(){
-    delete[] ranges;
-  }
-
-};
-
-struct Lidar: public WorldItem {
-  LaserScan* scan=0;
-  DifferentialDriveRobot(WorldItem* p=0): WorldItem(p) {}
-  virtual void timerTick(float dt) override {
-    Isometry2f motion(dt*trans_vel, 0, dt*rot_vel);
-    Isometry2f old_pose_in_parent=pose_in_parent;
-    pose_in_parent=pose_in_parent*motion;
-
-    World* w=getWorld();
-    if (w->checkCollision(this)) {
-      pose_in_parent=old_pose_in_parent;
-    }
-    WorldItem::timerTick();
-  }
-  
-  
-};
-  
 int main (int argc, char** argv) {
   /*
   Vec2f v1;

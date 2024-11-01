@@ -1,0 +1,34 @@
+Since the lesson of Oct 30 2024, I made some changes:
+
+1. Moved the source in several smaller .h and .cpp files to reason better
+
+2. Refactored the Grid class to get a single buffer, not an array of pointers to the rows. This makes my life easier for the visualization routines
+
+3. Created a "GridMap" object that inherits both from Grid and from WorldItem.
+   A map is a World Item after all, but we might have multiple maps.
+
+4. In WorldItem:
+   - made a struct WorldItemArray that encapsulates an array of
+     WorldItem;
+   
+   - made the isDescendant(const WorldItem* ancestor) predicate, that tells if *this
+     is a descendant of ancestor by recursively climbing up the parent tree
+   - made a canCollide(const WorldItem* other) predicate that asserts if
+     either other is an ancestor of this, or if this is ancestor of other
+
+5. In World:
+   - the method checkCollision(const WorldItem*) checks for a collision
+     if canCollide(...) is true.
+
+6. In GridMap:
+   - the predicate canCollide asserts for objects and sub-objects *inside* the map.
+
+   - the predicate collides(const WorldItem*) asserts if it finds a dark cell (<127) within the radius  of the item *in grid coordinates*.
+
+7. Added CMakeLists that seeks for OpenCV. We are gonna need it for visualization.
+
+Cheers,
+        G.
+        
+
+
