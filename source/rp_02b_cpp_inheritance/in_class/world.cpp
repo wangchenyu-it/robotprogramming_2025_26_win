@@ -25,7 +25,7 @@ void WorldItemVector::pushBack(ItemType new_item) {
 
 World* WorldItem::getWorld() {
   if (! parent)
-    return dynamic_cast<World*>(this);
+    return static_cast<World*>(this);
   return parent->getWorld();
 }
 
@@ -45,16 +45,17 @@ bool WorldItem::canCollide(const WorldItem* other) const {
           ! other->isDescendant(this));
 }
 
-WorldItem::WorldItem(WorldItem* parent_) {
+WorldItem::WorldItem(WorldItem* parent_):
+  pose_in_parent(0,0,0){
   if (parent_){
     parent=parent_;
     parent->children.pushBack(this);
   }
   World* w=getWorld();
-  if (!w) {
-    throw std::runtime_error("no_world");
-  }
-  w->items.pushBack(this);
+  if (w==this)
+    return;
+  if (w!=this)
+    w->items.pushBack(this);
 }
   
 Isometry2f WorldItem::poseInWorld() const {
@@ -91,4 +92,8 @@ const WorldItem* World::checkCollision(const WorldItem* current) {
       return o;
   }
   return 0;
+}
+
+World* World::getWorld() {
+  return this;
 }

@@ -1,4 +1,5 @@
 #include "grid_map.h"
+#include <cstring>
 
 GridMap::GridMap(int rows,
                  int cols,
@@ -39,4 +40,46 @@ bool GridMap::collides(const WorldItem* item) const {
     }
   }
   return false;
+}
+
+// ctor that loads from image
+GridMap::GridMap(const char* filename,
+                 float res,
+                 WorldItem* p,
+                 const Isometry2f& pose_in_parent_):
+  WorldItem(p)
+{
+  pose_in_parent=pose_in_parent_;
+  resolution=res;
+  //load using CV
+  cv::Mat m=cv::imread(filename);
+  if (m.rows==0) {
+    throw std::runtime_error("unable to load image");
+  }
+  cv::cvtColor(m, cv_image, cv::COLOR_BGR2GRAY);
+  int size=cv_image.rows*cv_image.cols;
+  resize(cv_image.rows, cv_image.cols);
+  resolution=res;
+  inv_resolution=1./res;
+  grid_origin=Vec2f(rows/2, cols/2);
+  _piw=poseInWorld();
+  _ipiw=_piw.inverse();
+  memcpy(values, cv_image.data, size);
+}
+  
+void GridMap::draw(Canvas& dest) {
+  Rotation2f Rt=_piw.R.inverse();
+  Rotation2f sRt=Rt.scale(inv_resolution);
+  Rotation2f s2Rt=Rt.scale(dest.resolution*inv_resolution);
+  Vec2f sT=grid_origin-sRt*(dest.canvas_origin*dest.resolution+_piw.t);
+  Vec2f t=_piw.t*(1./dest.resolution);
+  for (int r=0; r<dest.rows(); ++r)
+    for (int c=0; c<dest.cols(); ++c){
+      Vec2f dest_v(r,c);
+      Vec2f src_v=s2Rt*Vec2f(r,c)+sT;
+      int src_r=src_v.x();
+      int src_c=src_v.y();
+      if (inside(src_r, src_c))
+        dest.draw_image.at<uint8_t>(r,c)=cv_image.at<uint8_t>(src_r, src_c);
+    }
 }

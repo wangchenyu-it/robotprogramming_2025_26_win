@@ -63,8 +63,14 @@ int main (int argc, char** argv) {
   //       after each is done add a lil test
 
   // at the end uncomment the following
-  Isometry2f iso(0.1,0, 0.01);
-  Isometry2f pose;
-  pose.setIdentity();
-  
+  World w;
+  cerr << "world created" << endl;
+  GridMap gmap(argv[1], 0.1, &w, Isometry2f(0,10,0.3));
+  cerr << "gmap_loaded" << endl;
+  Canvas canvas;
+  canvas.init(gmap.rows/2, gmap.cols/2, 0.2);
+  gmap.draw(canvas);
+  canvas.drawCircle(Vec2f(0,0), 20, 0);
+  canvas.show();
+  cv::waitKey(0);
 }

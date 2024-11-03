@@ -1,8 +1,4 @@
 #include "world.h"
-
-struct GridMap: public Grid,
-                public GridMapping {
-}
   
 struct DifferentialDriveRobot: public WorldItem {
   float rot_vel=0;
@@ -51,8 +47,6 @@ struct Lidar: public WorldItem {
     }
     WorldItem::timerTick();
   }
-  
-  
 };
   
 int main (int argc, char** argv) {

@@ -31,12 +31,12 @@ struct WorldItemVector {
 
 
 struct WorldItem{
-  WorldItem* parent; // if 0 is the world:)
+  WorldItem* parent=0; // if 0 is the world:)
   WorldItemVector children;
   Isometry2f pose_in_parent;
   float radius;
 
-  World* getWorld();
+  virtual World* getWorld();
 
   bool isDescendant(const WorldItem* ancestor) const;
 
@@ -54,6 +54,8 @@ struct WorldItem{
 struct World: public WorldItem{
   // all elements in the world
   WorldItemVector items;
+
+  World* getWorld() override;
 
   bool collides(const WorldItem* other) const override;
 

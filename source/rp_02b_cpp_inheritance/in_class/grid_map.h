@@ -2,7 +2,8 @@
 #include "linalg.h"
 #include "grid.h"
 #include "world.h"
-
+#include "opencv2/opencv.hpp"
+#include "canvas.h"
 struct GridMap: public Grid, public WorldItem{
   float resolution=1; // meters_per_pixel
   float inv_resolution=1; //pixel_per_meter;
@@ -10,6 +11,12 @@ struct GridMap: public Grid, public WorldItem{
   Isometry2f _piw, _ipiw;
   GridMap(int rows,
           int cols,
+          float res,
+          WorldItem* p,
+          const Isometry2f& pose_in_parent_);
+
+  // ctor that loads from image
+  GridMap(const char* filename,
           float res,
           WorldItem* p,
           const Isometry2f& pose_in_parent_);
@@ -25,4 +32,7 @@ struct GridMap: public Grid, public WorldItem{
   bool canCollide(const WorldItem* other) const override;
 
   bool collides(const WorldItem* item) const override;
+
+  void draw(Canvas& dest);
+  cv::Mat cv_image;
 };

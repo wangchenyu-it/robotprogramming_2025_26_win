@@ -32,3 +32,8 @@ Cheers,
         
 
 
+======= UPDATE 2024/11/03 =========
+
+Added canvas for display, and display functions
+Added display functions to gridmap and tested
+

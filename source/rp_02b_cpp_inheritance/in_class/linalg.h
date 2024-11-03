@@ -162,6 +162,13 @@ struct Rotation2f {
     return ret;
   }
 
+  Rotation2f scale(float s) const {
+    Rotation2f ret(*this);
+    for (int r=0; r<Dim; ++r)
+      for (int c=0; c<Dim; ++c)
+        ret.R[r][c]*=s;
+    return ret;
+  }
 };
 
 inline ostream& operator << (ostream& os, const Rotation2f& src){
