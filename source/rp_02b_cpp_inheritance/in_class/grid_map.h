@@ -33,6 +33,6 @@ struct GridMap: public Grid, public WorldItem{
 
   bool collides(const WorldItem* item) const override;
 
-  void draw(Canvas& dest);
+  void draw(Canvas& dest) const override;
   cv::Mat cv_image;
 };

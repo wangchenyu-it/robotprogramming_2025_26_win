@@ -18,7 +18,9 @@ GridMap::GridMap(int rows,
 }
 
 bool GridMap::canCollide(const WorldItem* other) const {
-  return ! other->isDescendant(this);
+  bool ret=other->isDescendant(this);
+  //cerr << "gmap " << this << " can collide " << other << endl;
+  return ret;
 }
 
 bool GridMap::collides(const WorldItem* item) const {
@@ -27,6 +29,7 @@ bool GridMap::collides(const WorldItem* item) const {
   Vec2f gp=w2g(item->poseInWorld().t);
   int r0=gp.x();
   int c0=gp.y();
+  //cerr << "r0: " << r0 << " c0:" << c0 << endl;
   int radius=(int)(item->radius*inv_resolution);
   int radius2=radius*radius;
   for (int r=-radius; r<radius; ++r){
@@ -67,7 +70,7 @@ GridMap::GridMap(const char* filename,
   memcpy(values, cv_image.data, size);
 }
   
-void GridMap::draw(Canvas& dest) {
+void GridMap::draw(Canvas& dest) const {
   Rotation2f Rt=_piw.R.inverse();
   Rotation2f sRt=Rt.scale(inv_resolution);
   Rotation2f s2Rt=Rt.scale(dest.resolution*inv_resolution);
@@ -82,4 +85,5 @@ void GridMap::draw(Canvas& dest) {
       if (inside(src_r, src_c))
         dest.draw_image.at<uint8_t>(r,c)=cv_image.at<uint8_t>(src_r, src_c);
     }
+  WorldItem::draw(dest);
 }

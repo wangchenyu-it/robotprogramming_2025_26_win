@@ -7,9 +7,11 @@ find_package(OpenCV REQUIRED)
 add_executable(rp_sim
         grid.cpp
         grid_map.cpp
-        rp_sim.cpp
         world.cpp
-        canvas.cpp)
+        canvas.cpp
+        differential_drive_robot.cpp
+        lidar.cpp
+        rp_sim.cpp)
 
 INCLUDE_DIRECTORIES(${OpenCV_INCLUDE_DIRS})
 

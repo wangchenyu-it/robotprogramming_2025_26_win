@@ -31,7 +31,7 @@ int Grid::scanSegment(int& x,
                       int& y,
                       float angle,
                       const CellType& val_min,
-                      const float max_range) {
+                      const int max_range) const {
 
   Vec2f dir(cos(angle), sin(angle));
   Vec2f current(x,y);

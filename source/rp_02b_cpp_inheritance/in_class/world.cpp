@@ -68,7 +68,7 @@ bool WorldItem::collides(const WorldItem* other) const {
   Isometry2f my_pose_in_world= poseInWorld(); 
   Isometry2f other_pose_in_world= other->poseInWorld();
   Scalar distance=(my_pose_in_world.t-other_pose_in_world.t).norm();
-  return (distance < (radius + other->radius));
+  return  distance < (radius + other->radius);
 }
 
 void WorldItem::timerTick(float dt) {
@@ -94,6 +94,15 @@ const WorldItem* World::checkCollision(const WorldItem* current) {
   return 0;
 }
 
+void WorldItem::draw(Canvas& canvas) const {
+  for (int i=0; i<children.size(); ++i) {
+    const WorldItem* o=children.at(i);
+    if (o)
+      o->draw(canvas);
+  }
+}
+
 World* World::getWorld() {
   return this;
 }
+

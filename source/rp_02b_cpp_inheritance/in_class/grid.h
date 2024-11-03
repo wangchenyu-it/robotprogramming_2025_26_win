@@ -39,5 +39,5 @@ struct Grid {
                   int& y,
                   float angle,
                   const CellType& val_min,
-                  const float max_range);
+                  const int max_range) const;
 };

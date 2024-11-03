@@ -37,3 +37,7 @@ Cheers,
 Added canvas for display, and display functions
 Added display functions to gridmap and tested
 
+======= UPDATE 2024/11/03 (afternoon) =========
+
+Debug all, add lidar and add robot.
+Small test working

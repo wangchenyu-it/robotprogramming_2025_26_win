@@ -3,6 +3,7 @@
 #include <cmath>
 #include <stdexcept>
 #include "linalg.h"
+#include "canvas.h"
 
 struct WorldItem;
 struct World;
@@ -49,6 +50,8 @@ struct WorldItem{
   virtual bool collides(const WorldItem* other) const;
   
   virtual void timerTick(float dt);
+
+  virtual void draw(Canvas& canvas) const;
 };
 
 struct World: public WorldItem{
