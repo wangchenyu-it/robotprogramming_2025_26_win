@@ -24,7 +24,7 @@ struct Canvas {
       || cp.y()>=draw_image.cols;
   }
   void clear();
-  void drawCircle(const Vec2f& origin, const float radius, const uint8_t gray_value);
+  void drawCircle(const Vec2f& center, const float radius, const uint8_t gray_value);
   void drawPoint(const Vec2f& pos, const uint8_t gray_value);
   void drawLine(const Vec2f& p_start, const Vec2f& p_end, const uint8_t gray_value);
   void show();

@@ -19,7 +19,7 @@ void WorldItemVector::resize(int new_size) {
 
 void WorldItemVector::pushBack(ItemType new_item) {
   resize(_size+1);
-  _values[_size-1]=new_item;
+  at(_size-1)=new_item;
 }
 
 
@@ -54,8 +54,10 @@ WorldItem::WorldItem(WorldItem* parent_):
   World* w=getWorld();
   if (w==this)
     return;
-  if (w!=this)
-    w->items.pushBack(this);
+  if (!w)
+    throw std::runtime_error("no world");
+  
+  w->items.pushBack(this);
 }
   
 Isometry2f WorldItem::poseInWorld() const {

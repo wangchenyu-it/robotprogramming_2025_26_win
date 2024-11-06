@@ -8,6 +8,9 @@ struct LaserScan {
   int num_beams;
   float* ranges;
   LaserScan(int n_beams=181);
+  LaserScan(const LaserScan&) = delete;
+  LaserScan& operator=(const LaserScan&) = delete;
+  
   ~LaserScan();
 };
 

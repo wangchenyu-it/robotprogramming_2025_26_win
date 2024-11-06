@@ -33,8 +33,11 @@ int Grid::scanSegment(int& x,
                       const CellType& val_min,
                       const int max_range) const {
 
-  Vec2f dir(cos(angle), sin(angle));
+  Vec2f dir(cos(angle),
+            sin(angle));
+
   Vec2f current(x,y);
+
   int range=0;
   while (range<=max_range) {
     if (! inside(current.x(), current.y()))

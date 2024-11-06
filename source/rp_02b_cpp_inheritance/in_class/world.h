@@ -16,6 +16,13 @@ struct WorldItemVector {
   inline int size() const {return _size;}
   void resize(int new_size);
   void pushBack(ItemType item);
+
+  inline const ItemType& operator [](int pos) const {
+    if (pos<0||pos>=_size)
+      throw std::runtime_error("out of bounds");
+    return _values[pos];
+  }
+
   
   inline const ItemType& at(int pos) const {
     if (pos<0||pos>=_size)

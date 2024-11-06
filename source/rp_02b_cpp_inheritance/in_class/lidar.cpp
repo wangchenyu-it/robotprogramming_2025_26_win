@@ -32,6 +32,7 @@ void Lidar::timerTick(float dt) {
   const GridMap* gmap=getGridMap();
   if (! gmap)
     throw std::runtime_error("no gmap");
+
   // grid in world
   Isometry2f giw=gmap->poseInWorld();
   // lidar in world
@@ -59,8 +60,7 @@ void Lidar::timerTick(float dt) {
     scan.ranges[i]=range;
     //cerr << "[a: " << alpha << " r: " << range << "]";
   }
-  cerr << endl;
-  //get the scan pose in the grid_map
+  //cerr << endl;
 }
 
 void Lidar::draw(Canvas& canvas) const {

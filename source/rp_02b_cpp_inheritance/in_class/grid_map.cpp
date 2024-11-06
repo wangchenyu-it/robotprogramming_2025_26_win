@@ -7,14 +7,14 @@ GridMap::GridMap(int rows,
                  WorldItem* p,
                  const Isometry2f& pose_in_parent_):
   Grid(rows, cols),
-  WorldItem(parent),
+  WorldItem(p),
   resolution(res),
   inv_resolution(1./res),
   grid_origin(rows/2, cols/2),
   _piw(poseInWorld()),
   _ipiw(poseInWorld().inverse())
 {
-  WorldItem::pose_in_parent=pose_in_parent;
+  pose_in_parent=pose_in_parent_;
 }
 
 bool GridMap::canCollide(const WorldItem* other) const {
@@ -35,6 +35,8 @@ bool GridMap::collides(const WorldItem* item) const {
   for (int r=-radius; r<radius; ++r){
     int rx=r+r0;
     for (int c=-radius; c<radius; ++c) {
+      if (c*c+r*r>radius2)
+        continue;
       int cx=c+c0;
       if (! inside(rx,cx))
         continue;
