@@ -2,7 +2,33 @@
 #include <cstdlib>
 #include <cstring>
 
+template <typename T>
+struct MyClass_ {
+
+  struct MyInnerClass {
+    static int myMethod();
+  };
+};
+
+
+MyClass_<T> my_class;
+MyClass_<T>::MyInnerClass my_inner_class;
+
+MyClass_<T>::MyInnerClass::myMethod();
+
+
+
 using namespace std;
+
+template  <typename T>
+struct CompareSmallerThan_{
+  inline bool operator()(const T& a, const T& b) const {return a<b;}  
+};
+
+template  <typename T>
+struct CompareGreaterThan_{
+  inline bool operator()(const T& a, const T& b) const {return a>b;}  
+};
 
 template <typename MyType>
 void printV(MyType* v, MyType* v_end) {
@@ -17,12 +43,12 @@ template <typename MyType, typename Compare>
 void myMerge(MyType* dest,
              MyType* begin,
              MyType* middle,
-             MyType* end,
-             const Compare& comp) {
+             MyType* end) {
   MyType* b1=begin;
   MyType* b2=middle;
+  Compare comp;
   while (b1<middle && b2<end){
-    if (comp(*b1, *b2)) {
+    if (comp(*b1,*b2)) {
       *dest=*b1;
       ++ b1;
     } else {
@@ -30,12 +56,22 @@ void myMerge(MyType* dest,
       ++ b2;
     }
     ++dest;
-
+  }
+  while (b1<middle){
+    *dest=*b1;
+    ++b1;
+    ++dest;
+  }
+  while (b2<end){
+    *dest=*b2;
+    ++b2;
+    ++dest;
   }
 };
 
 template <typename MyType, typename Compare>
-void mySort(MyType* begin, MyType* end, const Compare& comp, MyType* buf=0) {
+void mySort(MyType* begin, MyType* end, MyType* buf=0) {
+  Compare comp;
   int size=end-begin;
   if (size<2)
     return;
@@ -45,25 +81,13 @@ void mySort(MyType* begin, MyType* end, const Compare& comp, MyType* buf=0) {
     destroy_buffer=true;
   }
   int middle=size/2;
-  mySort(begin, begin+middle, comp, buf);
-  mySort(begin+middle, end, comp, buf);
+  mySort<MyType, Compare>(begin, begin+middle, buf);
+  mySort<MyType, Compare>(begin+middle, end, buf);
   
-  myMerge(buf, begin, begin+middle, end, comp);
+  myMerge<MyType, Compare>(buf, begin, begin+middle, end);
   memcpy(begin, buf, sizeof(MyType)*size);
   if (destroy_buffer)
     delete [] buf;
-}
-
-struct compareGreaterThan {
-  bool operator() (const double& v1, const double& v2) const {
-    return v1>v2;
-  }
-};
-
-struct compareLessThan {
-  bool operator() (const double& v1, const double& v2) const {
-    return v1<v2;
-  }
 };
 
 int main(int argc, char** argv) {
@@ -78,7 +102,7 @@ int main(int argc, char** argv) {
   printV(v, v_end);
 
   cout << "sorted: " << endl;
-  mySort(v, v_end, compareGreaterThan());
+  mySort<double, CompareGreaterThan_<double> >(v, v_end);
   printV(v, v_end);
 
 }
