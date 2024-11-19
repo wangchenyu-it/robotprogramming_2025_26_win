@@ -116,7 +116,7 @@ float  DMapPlanner::computePath(std::list<Vector2f>& path,
         return -1;
       }
       float cost=policy.at(pg.x(), pg.y());
-      auto gradient=policy_gradients.at(pg.x(), pg.y());
+      auto gradient=policy_gradients.atBilinear(pg.x(), pg.y()).first;
       if (cost<0) {
         cerr << "size: " << path.size() << "pos: " << current.transpose() << "gradient: " << gradient.transpose() << " cost : "<< cost << endl;
         cerr << "abort(cost)" << endl;

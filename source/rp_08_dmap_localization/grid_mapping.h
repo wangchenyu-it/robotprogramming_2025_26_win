@@ -18,19 +18,6 @@ struct GridMapping {
   }
 
   
-  struct DijkstraCell{
-    DijkstraCell(DijkstraCell* p=0,
-                 float c=std::numeric_limits<float>::max()):
-      parent(p),
-      cost(c)
-    {}
-    DijkstraCell* parent;
-    float cost;
-  };
-
-  using DijkstraGrid=Grid_<DijkstraCell>;
-  DijkstraGrid d_grid;
-  
   GridMapping(int r=0, int c=0, float res=0.1){
     resize(r,c,res);
   }
