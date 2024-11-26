@@ -8,11 +8,12 @@
 struct DMapPlanner {
   GridMapping mapping; // to convert from world to grid coordinates
   Grid_<float> obstacle_costs; // cost of a cell based on distance
+  Grid_<float> distances; // useless, kept only for visualization
   Grid_<float> policy; // surface pointing to the goal
   Grid_<Vector2f> policy_gradients; // surface pointing to the goal
   float max_traversal_cost=100;
   float robot_radius=0.3;
-  float max_distance_range=1;
+  float max_distance_range=5;
 
   
   struct DijkstraCell{

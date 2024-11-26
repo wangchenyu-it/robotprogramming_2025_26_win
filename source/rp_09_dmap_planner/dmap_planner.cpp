@@ -7,18 +7,19 @@ void DMapPlanner::init(float resolution,
                        const DMap& dmap) {
   max_distance_range=max_range;
   float max_range_in_pixel=max_range/resolution;
-  obstacle_costs=dmap.distances(max_range_in_pixel);
+  distances=dmap.distances(max_range_in_pixel);
+  obstacle_costs.resize(distances.rows, distances.cols);
   float d_slope=max_traversal_cost/(max_range-robot_radius);
   for (int r=0; r<obstacle_costs.rows; ++r) {
     for (int c=0; c<obstacle_costs.cols; ++c) {
-      auto& target=obstacle_costs.at(r,c);
-      target*=resolution;
-      float delta_cost=target-robot_radius;
-      if (delta_cost<0) {
-        target=max_traversal_cost;
-        continue;
+      auto distance_in_pixel=distances.at(r,c);
+      auto distance_in_meters = distance_in_pixel*resolution;
+      float delta_cost=distance_in_meters-robot_radius;
+      auto cost=max_traversal_cost;
+      if (delta_cost>0) {
+        cost=std::max(0.f,max_traversal_cost-delta_cost*d_slope)+resolution;
       }
-      target=std::max(0.f,max_traversal_cost-delta_cost*d_slope)+resolution;
+      obstacle_costs.at(r,c)=cost;
     }
   }
   mapping.resize(obstacle_costs.rows, obstacle_costs.cols, resolution);
