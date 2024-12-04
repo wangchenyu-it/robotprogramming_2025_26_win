@@ -133,7 +133,7 @@ float  DMapPlanner::computePath(std::list<Vector2f>& path,
         return -1;
       }
       gradient.normalize();
-      current-=gradient*mapping.resolution;
+      current = current - gradient*0.2*mapping.resolution;
     }
     return -1;
   } else {
