@@ -1,0 +1,2 @@
+/home/wangchenyu/ros2_ws/.pixi/envs/default/bin/x86_64-conda-linux-gnu-ar qc libbtree_library.a CMakeFiles/btree_library.dir/btree.cpp.o
+/home/wangchenyu/ros2_ws/.pixi/envs/default/bin/x86_64-conda-linux-gnu-ranlib libbtree_library.a

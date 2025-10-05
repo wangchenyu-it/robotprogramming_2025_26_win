@@ -76,6 +76,10 @@ MatF& MatF::operator =(const MatF& other) {
       return *this;
     v=new float[dimension];
   }
+  // added by wcy
+  for (int i = 0; i < dimension; ++i)
+    v[i] = other.v[i];
+
   return *this;
 }
 

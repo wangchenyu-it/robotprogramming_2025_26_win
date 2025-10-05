@@ -1,0 +1,2 @@
+/home/wangchenyu/ros2_ws/.pixi/envs/default/bin/x86_64-conda-linux-gnu-ar qc libvec_f_library.a CMakeFiles/vec_f_library.dir/vec_f.cpp.o
+/home/wangchenyu/ros2_ws/.pixi/envs/default/bin/x86_64-conda-linux-gnu-ranlib libvec_f_library.a

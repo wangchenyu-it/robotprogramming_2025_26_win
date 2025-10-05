@@ -1,0 +1,10 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/wangchenyu/robotprogramming_2025_26/exercises/rp_02_cpp_intro/build/cmake_install.cmake",
+		"/home/wangchenyu/robotprogramming_2025_26/exercises/rp_02_cpp_intro/build/src/cmake_install.cmake",
+		"/home/wangchenyu/robotprogramming_2025_26/exercises/rp_02_cpp_intro/build/src/linalg/cmake_install.cmake",
+		"/home/wangchenyu/robotprogramming_2025_26/exercises/rp_02_cpp_intro/build/src/btree/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

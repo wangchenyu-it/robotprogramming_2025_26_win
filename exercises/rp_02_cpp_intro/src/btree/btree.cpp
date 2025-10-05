@@ -21,6 +21,9 @@ TreeNodeInt* TreeNodeInt::find(int value_) {
   if (value_<value) {
     // TODO: fill here
     // if there is a left child, continue the search in the left, otherwise return null
+    if(!left)
+      return 0;
+    return left->find(value_);
   }
   if (value_>value) {
     // if there is a right child, continue the search in the right, otherwise return null
@@ -43,6 +46,11 @@ bool TreeNodeInt::add(int value_) {
   }
   if (value_>value) {
     // TODO: fill here
+    if(!right){
+      right=new TreeNodeInt(value_);
+      return right->add(value_);
+    }
+    return right->add(value_);
   }
   return false;
 }
